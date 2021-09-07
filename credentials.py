@@ -1,25 +1,29 @@
 import yaml
 
+from helpers import get_root_dir
+
 
 class Credentials:
-    _credentials_file = 'secrets.yml'
+    _credentials_file = get_root_dir() + 'secrets.yml'
     _credentials = None
 
-    @classmethod
-    def _get_credentials(cls) -> dict:
-        if cls._credentials is None:
-            with open(cls._credentials_file, 'r') as stream:
-                cls._credentials = yaml.safe_load(stream)
-        return cls._credentials
+    def __init__(self):
+        self._credentials = self._get_credentials()
 
-    @classmethod
-    def get_user_access_token(cls) -> str:
-        return cls._get_credentials().get('user_access_token')
+    def _get_credentials(self) -> dict:
+        if self._credentials is None:
+            with open(self._credentials_file, 'r') as stream:
+                self._credentials = yaml.safe_load(stream)
+        return self._credentials
 
-    @classmethod
-    def get_vcc_api_key_primary(cls) -> str:
-        return cls._get_credentials().get('vcc_api_key_primary')
+    @property
+    def access_token(self) -> str:
+        return self._get_credentials().get('user_access_token')
 
-    @classmethod
-    def get_vcc_api_key_secondary(cls) -> str:
-        return cls._get_credentials().get('vcc_api_key_secondary')
+    @property
+    def api_key_primary(self) -> str:
+        return self._get_credentials().get('vcc_api_key_primary')
+
+    @property
+    def api_key_secondary(self) -> str:
+        return self._get_credentials().get('vcc_api_key_secondary')
